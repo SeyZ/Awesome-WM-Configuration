@@ -325,7 +325,27 @@ layouts =
       awful.key({ }, "XF86MonBrightnessUp", function ()
                    awful.util.spawn("xbacklight -inc 25") end),
       awful.key({ }, "XF86MonBrightnessDown", function ()
-                   awful.util.spawn("xbacklight -dec 25") end)
+                   awful.util.spawn("xbacklight -dec 25") end),
+
+      -- Move Window to workspace left/right
+      awful.key({ modkey, "Shift"   }, ".",
+                function (c)
+                   local curidx = awful.tag.getidx(c:tags()[1])
+                   if curidx == 1 then
+                      c:tags({screen[mouse.screen]:tags()[9]})
+                   else
+                      c:tags({screen[mouse.screen]:tags()[curidx - 1]})
+                   end
+                end),
+      awful.key({ modkey, "Shift"   }, "/",
+                function (c)
+                   local curidx = awful.tag.getidx(c:tags()[1])
+                   if curidx == 9 then
+                      c:tags({screen[mouse.screen]:tags()[1]})
+                   else
+                      c:tags({screen[mouse.screen]:tags()[curidx + 1]})
+                   end
+                end)
                                      )
 
    -- Compute the maximum number of digit we need, limited to 9
