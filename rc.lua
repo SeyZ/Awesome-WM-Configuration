@@ -124,15 +124,6 @@ layouts =
    -- volwidget:buttons(volbar.widget:buttons())
    -- }}}
 
-   -- gmail widget and tooltip
-   -- Create a gmailwidget (inbox status)
-   gmailicon = widget({ type = "imagebox" })
-   gmailicon.image = image("/home/seyz/.config/awesome/icons/gmail.png")
-   -- Initialize widget
-   gmailwidget = widget({ type = "textbox" })
-   -- Register widget
-   vicious.register(gmailwidget, vicious.widgets.gmail, "${count}", 300)
-
    -- Create a systray
    mysystray = widget({ type = "systray" })
 
@@ -216,7 +207,6 @@ layouts =
          mylayoutbox[s],
          mytextclock,
          separator, volwidget,  volbar.widget, volicon,
-         separator, gmailwidget, gmailicon,
          separator, memwidget,
          s == 1 and mysystray or nil,
          mytasklist[s],
@@ -266,6 +256,7 @@ layouts =
                 end),
 
       -- Standard program
+
       awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
       awful.key({ modkey, "Control" }, "r", awesome.restart),
       awful.key({ modkey, "Shift"   }, "q", awesome.quit),
@@ -455,3 +446,4 @@ layouts =
    -- {{{ Autostart applications
    awful.util.spawn_with_shell("gtk-redshift")
    -- }}}
+
