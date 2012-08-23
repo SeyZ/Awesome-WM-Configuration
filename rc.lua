@@ -318,6 +318,10 @@ layouts =
       awful.key({ }, "XF86MonBrightnessDown", function ()
                    awful.util.spawn("xbacklight -dec 25") end),
 
+      -- Lock screen
+      awful.key({ modkey, "Shift"}, "BackSpace", function ()
+                   awful.util.spawn("slock") end),
+
       -- Move Window to workspace left/right
       awful.key({ modkey, "Shift"   }, ".",
                 function (c)
@@ -337,7 +341,7 @@ layouts =
                       c:tags({screen[mouse.screen]:tags()[curidx + 1]})
                    end
                 end)
-                                     )
+                )
 
    -- Compute the maximum number of digit we need, limited to 9
    keynumber = 0
