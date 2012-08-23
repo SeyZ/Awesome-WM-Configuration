@@ -44,7 +44,7 @@ end
 beautiful.init("/home/seyz/.config/awesome/themes/zenburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "terminator"
+terminal = "urxvt -e zsh -c 'tmux attach'"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
