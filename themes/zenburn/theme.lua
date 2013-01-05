@@ -8,7 +8,6 @@
 
 -- {{{ Main
 theme = {}
-theme.wallpaper_cmd = { "awsetbg /home/seyz/pictures/wallpapers/ws_Wood_Floor_1920x1200.jpg" }
 -- }}}
 
 -- {{{ Styles
