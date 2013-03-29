@@ -52,8 +52,16 @@ theme.menu_width  = "100"
 -- }}}
 
 -- {{{ Icons
+theme.widget_arch = theme.icons .. "/blue/arch.png"
 theme.widget_pac = theme.icons .. "/yellow/pacman.png"
 theme.widget_mail = theme.icons .. "/red/mail.png"
+theme.widget_mem = theme.icons .. "/blue/mem.png"
+theme.widget_mpd = theme.icons .. "/blue/play.png"
+theme.widget_tag_black = theme.icons .. "/black/fs_01.png"
+theme.widget_tag_red = theme.icons .. "/red/fs_01.png"
+theme.widget_tag_magenta = theme.icons .. "/magenta/fs_01.png"
+theme.widget_tag_yellow = theme.icons .. "/yellow/fs_01.png"
+theme.widget_tag_green = theme.icons .. "/green/fs_01.png"
 -- }}}
 
 -- {{{ Taglist
