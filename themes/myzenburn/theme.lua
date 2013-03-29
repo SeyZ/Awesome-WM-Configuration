@@ -9,7 +9,7 @@ theme.icons = os.getenv("HOME") .. "/.config/awesome/icons"
 -- }}}
 
 -- {{{ Styles
-theme.font      = "sans 8"
+theme.font      = "Tamsyn 10"
 
 -- {{{ Colors
 theme.fg_grey = "#424242"

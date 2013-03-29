@@ -17,7 +17,6 @@ local themes = confdir .. "/themes"
 local wallpapers = confdir .. "/wallpapers"
 local icons = confdir .. "/icons"
 local active_theme = themes .. "/myzenburn"
-local font = "Tamsyn 10"
 
 beautiful.init(active_theme .. "/theme.lua")
 beautiful.wallpaper = wallpapers .. "/pacman.jpg"
@@ -59,7 +58,6 @@ archicon:set_image(icons .. "/blue/arch_10x10.png")
 mpdicon = wibox.widget.imagebox()
 mpdicon:set_image(icons .. "/blue/play.png")
 mpdwidget = wibox.widget.textbox()
-mpdwidget:set_font(font)
 -- Register widget
 vicious.register(mpdwidget, vicious.widgets.mpd,
     function (mpdwidget, args)
@@ -110,7 +108,6 @@ vicious.register(pacwidget, vicious.widgets.pkg,
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
-mytextclock:set_font(font)
 
 -- {{{ Multiple screen switcher
 --
