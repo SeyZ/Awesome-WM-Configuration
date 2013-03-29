@@ -1,128 +1,134 @@
--- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
-awful.rules = require("awful.rules")
-require("awful.autofocus")
--- Widget and layout library
+local autofocus = require("awful.autofocus")
+local rules = require("awful.rules")
 local wibox = require("wibox")
--- Theme handling library
-local beautiful = require("beautiful")
--- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+local vicious = require("vicious")
+local beautiful = require("beautiful")
+local error = require("error")
 
--- {{{ Error handling
--- Check if awesome encountered an error during startup and fell back to
--- another config (This code will only ever execute for the fallback config)
-if awesome.startup_errors then
-    naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
-                     text = awesome.startup_errors })
-end
+local terminal = "urxvt -e zsh -c 'tmux attach'"
+local modkey = "Mod4"
+local home = os.getenv("HOME")
+local confdir = home .. "/.config/awesome"
+local themes = confdir .. "/themes"
+local wallpapers = confdir .. "/wallpapers"
+local icons = confdir .. "/icons"
+local active_theme = themes .. "/myzenburn"
+local font = "Tamsyn 10"
 
--- Handle runtime errors after startup
-do
-    local in_error = false
-    awesome.connect_signal("debug::error", function (err)
-        -- Make sure we don't go into an endless error loop
-        if in_error then return end
-        in_error = true
+beautiful.init(active_theme .. "/theme.lua")
+beautiful.wallpaper = wallpapers .. "/pacman.jpg"
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
-                         text = err })
-        in_error = false
-    end)
-end
--- }}}
-
--- {{{ Variable definitions
--- Themes define colours, icons, and wallpapers
-beautiful.init("/home/seyz/.config/awesome/themes/zenburn/theme.lua")
-
--- This is used later as the default terminal and editor to run.
-terminal = "urxvt -e zsh -c 'tmux attach'"
-editor = os.getenv("EDITOR") or "nano"
-editor_cmd = terminal .. " -e " .. editor
-
--- Default modkey.
--- Usually, Mod4 is the key with a logo between Control and Alt.
--- If you do not like this or do not have such a key,
--- I suggest you to remap Mod4 to another key using xmodmap or other tools.
--- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod4"
-
--- Table of layouts to cover with awful.layout.inc, order matters.
-local layouts =
-{
-    awful.layout.suit.tile.left,
-    awful.layout.suit.floating,
+local layouts = {
     awful.layout.suit.tile,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
     awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier
+    awful.layout.suit.floating,
 }
--- }}}
 
--- {{{ Wallpaper
-beautiful.wallpaper = "/home/seyz/pictures/wallpapers/ws_Wood_Floor_1920x1200.jpg"
 if beautiful.wallpaper then
     for s = 1, screen.count() do
         gears.wallpaper.maximized(beautiful.wallpaper, s, true)
     end
 end
--- }}}
 
--- {{{ Tags
--- Define a tag table which hold all screen tags.
-tags = {}
+tags = {
+    names  = { "code ", "term ", "web ", "chat ", "else "}
+}
+
 for s = 1, screen.count() do
-    -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+    tags[s] = awful.tag(tags.names, s, layouts[1])
+    awful.tag.seticon(icons .. "/black/fs_01.png", tags[s][1])
+    awful.tag.seticon(icons .. "/red/cat.png", tags[s][2])
+    awful.tag.seticon(icons .. "/magenta/dish.png", tags[s][3])
+    awful.tag.seticon(icons .. "/yellow/pacman.png", tags[s][4])
+    awful.tag.seticon(icons .. "/green/phones.png", tags[s][5])
 end
--- }}}
 
--- {{{ Menu
--- Create a launcher widget and a main menu
+space = wibox.widget.textbox()
+space:set_text(' ')
+space2 = wibox.widget.textbox()
+space2:set_text('  ')
+
+archicon = wibox.widget.imagebox()
+archicon:set_image(icons .. "/blue/arch_10x10.png")
+
+-- Initialize widget
+mpdicon = wibox.widget.imagebox()
+mpdicon:set_image(icons .. "/blue/play.png")
+mpdwidget = wibox.widget.textbox()
+mpdwidget:set_font(font)
+-- Register widget
+vicious.register(mpdwidget, vicious.widgets.mpd,
+    function (mpdwidget, args)
+        if args["{state}"] == "Stop" then
+            return " - "
+        else
+            return args["{Artist}"]..' - '.. args["{Title}"]
+        end
+    end, 10)
+
 mymainmenu = awful.menu({ items = {
-   { "open terminal", terminal },
+   { "Terminal", terminal },
    { "restart", awesome.restart },
    { "quit", awesome.quit },
 }})
 
 mylauncher = awful.widget.launcher({ menu = mymainmenu })
 
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+menubar.utils.terminal = terminal
+
+memwidget = awful.widget.progressbar()
+memwidget:set_width(8)
+memwidget:set_height(10)
+memwidget:set_vertical(true)
+memwidget:set_background_color("#494B4F")
+memwidget:set_border_color(nil)
+memwidget:set_color({ type = "linear",
+                      from = { 0, 0 },
+                      to = { 10,0 },
+                      stops = {
+                          {0, "#AECF96"}, {0.5, "#88A175"}, {1, "#FF5656"}
+                      }})
+-- Register widget
+vicious.register(memwidget, vicious.widgets.mem, "$1", 13)
+
+-- {{{ Pacman Updates
+pacicon = wibox.widget.imagebox()
+pacicon:set_image(beautiful.widget_pac)
+
+pactext = wibox.widget.textbox()
+pactext:set_text('updates')
+
+pacwidget = wibox.widget.textbox()
+vicious.register(pacwidget, vicious.widgets.pkg,
+    "<span color='" .. beautiful.fg_yellow .. "'>$1</span>", 60, "Arch")
 -- }}}
 
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
+mytextclock:set_font(font)
 
 -- {{{ Multiple screen switcher
 --
 -- Get active outputs
 local function outputs()
-   local outputs = {}
-   local xrandr = io.popen("xrandr -q")
-   if xrandr then
-      for line in xrandr:lines() do
-     output = line:match("^([%w-]+) connected ")
-     if output then
-        outputs[#outputs + 1] = output
-     end
-      end
-      xrandr:close()
-   end
+    local outputs = {}
+    local xrandr = io.popen("xrandr -q")
+    if xrandr then
+        for line in xrandr:lines() do
+            output = line:match("^([%w-]+) connected ")
+            if output then
+                outputs[#outputs + 1] = output
+            end
+        end
+        xrandr:close()
+    end
 
-   return outputs
+    return outputs
 end
 
 local function arrange(out)
@@ -220,7 +226,7 @@ local function xrandr()
                 icon = icon,
                 timeout = 4,
                 screen = mouse.screen, -- Important, not all screens may be visible
-                font = "Free Sans 18",
+                font = font,
                 replaces_id = state.cid }).id
 
    -- Setup the timer
@@ -310,12 +316,23 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
     left_layout:add(mylauncher)
+    left_layout:add(archicon)
     left_layout:add(mytaglist[s])
+    left_layout:add(space2)
     left_layout:add(mypromptbox[s])
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mpdicon)
+    right_layout:add(mpdwidget)
+    right_layout:add(space2)
+    right_layout:add(pacicon)
+    right_layout:add(pacwidget)
+    right_layout:add(space)
+    right_layout:add(pactext)
+    right_layout:add(space2)
+    right_layout:add(memwidget)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
 
@@ -477,6 +494,14 @@ globalkeys = awful.util.table.join(globalkeys,
         end))
 -- }}}
 
+-- {{{ Volume configuration
+globalkeys = awful.util.table.join(globalkeys,
+    awful.key({ }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer set Master 1%+", false) end),
+    awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer set Master 1%-", false) end),
+    awful.key({ }, "XF86AudioMute", function () awful.util.spawn("amixer sset Master toggle", false) end)
+)
+-- }}}
+
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
@@ -487,22 +512,15 @@ root.keys(globalkeys)
 -- }}}
 
 -- {{{ Rules
-awful.rules.rules = {
+rules.rules = {
     -- All clients will match this rule.
     { rule = { },
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      keys = clientkeys,
-                     buttons = clientbuttons } },
-    { rule = { class = "gimp" },
-      properties = { floating = true } },
-    { rule = { class = "Chromium" },
-      properties = { tag = tags[1][3] } },
-    { rule = { class = "URxvt" },
-      properties = { tag = tags[1][2] } },
-    { rule = { class = "Gvim" },
-      properties = { tag = tags[1][1] } },
+                     buttons = clientbuttons,
+                     size_hints_honor = false } },
 }
 -- }}}
 
@@ -570,20 +588,4 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
-
--- {{{ Autostart application
---
-function run_once(cmd)
-    findme = cmd
-    firstspace = cmd:find(" ")
-    if firstspace then
-        findme = cmd:sub(0, firstspace-1)
-    end
-    awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
-end
-
-run_once("chromium")
-run_once("python2 /usr/bin/gtk-redshift")
-run_once("gvim")
 -- }}}
