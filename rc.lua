@@ -48,8 +48,8 @@ for s = 1, screen.count() do
   awful.tag.seticon(beautiful.widget_tag_black, tags[s][1])
   awful.tag.seticon(beautiful.widget_tag_red, tags[s][2])
   awful.tag.seticon(beautiful.widget_tag_magenta, tags[s][3])
-  awful.tag.seticon(beautiful.widget_tag_yellow, tags[s][4])
-  awful.tag.seticon(beautiful.widget_tag_green, tags[s][5])
+  awful.tag.seticon(beautiful.widget_tag_green, tags[s][4])
+  awful.tag.seticon(beautiful.widget_tag_yellow, tags[s][5])
 end
 -- }}}
 
@@ -93,7 +93,16 @@ memicon = wibox.widget.imagebox()
 memicon:set_image(beautiful.widget_mem)
 
 vicious.register(memwidget, vicious.widgets.mem,
-  "<span color='" .. beautiful.fg_blue .. "'>$1%</span>", 13)
+  "<span color='" .. beautiful.fg_magenta .. "'>$1%</span>", 13)
+-- }}}
+
+-- {{{ CPU
+cpuwidget = wibox.widget.textbox()
+cpuicon = wibox.widget.imagebox()
+cpuicon:set_image(beautiful.widget_cpu)
+
+vicious.register(cpuwidget, vicious.widgets.cpu,
+  "<span color='" .. beautiful.fg_green .. "'>$1%</span>", 13)
 -- }}}
 
 -- {{{ Pacman Updates
@@ -167,6 +176,8 @@ for s = 1, screen.count() do
     right_layout:add(space)
     right_layout:add(pacicon)
     right_layout:add(pacwidget)
+    right_layout:add(cpuicon)
+    right_layout:add(cpuwidget)
     right_layout:add(memicon)
     right_layout:add(memwidget)
     right_layout:add(mytextclock)
