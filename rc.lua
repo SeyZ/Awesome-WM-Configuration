@@ -79,10 +79,10 @@ mpdicon:set_image(beautiful.widget_mpd)
 mpdwidget = wibox.widget.textbox()
 
 vicious.register(mpdwidget, vicious.widgets.mpd, function(mpdwidget, args)
-  if args["{state}"] == "Stop" then
-    return " - "
-  else
+  if args["{state}"] == "Play" then
     return args["{Artist}"]..' - '.. args["{Title}"]
+  else
+    return " - "
   end
 end, 10)
 -- }}}
