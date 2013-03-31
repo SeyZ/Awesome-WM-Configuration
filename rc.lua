@@ -21,7 +21,8 @@ local active_theme = themes .. "/myzenburn"
 
 -- {{{ Theme initialization
 beautiful.init(active_theme .. "/theme.lua")
-beautiful.wallpaper = wallpapers .. "/pacman.jpg"
+--beautiful.wallpaper = wallpapers .. "/pacman.jpg"
+beautiful.wallpaper = wallpapers .. "/coffee.jpg"
 
 if beautiful.wallpaper then
   for s = 1, screen.count() do
