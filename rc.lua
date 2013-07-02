@@ -11,6 +11,8 @@ local xrandr = require("xrandr")
 local error = require("error")
 
 local terminal = "urxvt -e zsh -c 'tmux attach'"
+local browser = "chromium"
+local editor = "gvim"
 local modkey = "Mod4"
 local home = os.getenv("HOME")
 local confdir = home .. "/.config/awesome"
@@ -22,7 +24,7 @@ local active_theme = themes .. "/myzenburn"
 -- {{{ Theme initialization
 beautiful.init(active_theme .. "/theme.lua")
 --beautiful.wallpaper = wallpapers .. "/pacman.jpg"
-beautiful.wallpaper = wallpapers .. "/coffee.jpg"
+beautiful.wallpaper = wallpapers .. "/nodejs.png"
 
 if beautiful.wallpaper then
   for s = 1, screen.count() do
@@ -169,7 +171,7 @@ for s = 1, screen.count() do
   left_layout:add(mypromptbox[s])
 
   local right_layout = wibox.layout.fixed.horizontal()
-  if s == 1 then
+  if screen.count() == 2 and s == 2 or screen.count() == 1 then
     right_layout:add(mpdicon)
     right_layout:add(mpdwidget)
     right_layout:add(space)
@@ -222,6 +224,8 @@ globalkeys = awful.util.table.join(
     awful.client.movetotag(tags[mouse.screen][dstidx], c)
   end),
   awful.key({ modkey, }, "Return", function() awful.util.spawn(terminal) end),
+  awful.key({ modkey, }, "F9", function() awful.util.spawn(editor) end),
+  awful.key({ modkey, }, "F10", function() awful.util.spawn(browser) end),
   awful.key({ modkey, "Control" }, "r", awesome.restart),
   awful.key({ modkey, "Control" }, "q", awesome.quit),
   awful.key({ modkey, }, "l", function() awful.tag.incmwfact( 0.05) end),
@@ -238,6 +242,15 @@ globalkeys = awful.util.table.join(
     awful.util.spawn("amixer set Master 1%-", false)
   end),
   awful.key({ }, "XF86AudioMute", function()
+    awful.util.spawn("amixer set Master toggle", false)
+  end),
+  awful.key({ "Mod4" }, "F3", function()
+    awful.util.spawn("amixer set Master 1%+", false)
+  end),
+  awful.key({ "Mod4" }, "F2", function()
+    awful.util.spawn("amixer set Master 1%-", false)
+  end),
+  awful.key({ "Mod4" }, "F1", function()
     awful.util.spawn("amixer set Master toggle", false)
   end)
 )
@@ -305,6 +318,7 @@ rules.rules = {
         size_hints_honor = false
       }
     },
+    { rule = { class = "Exe"}, properties = {floating = true} },
 }
 -- }}}
 
